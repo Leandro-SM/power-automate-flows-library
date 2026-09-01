@@ -1,0 +1,43 @@
+{
+  "$comment": "Descrição estruturada GENÉRICA e FICTÍCIA de um fluxo do Power Automate. Fins didáticos; não é um export oficial nem contém conexões reais.",
+  "name": "Notificacao no Teams",
+  "type": "automated",
+  "trigger": {
+    "connector": "SharePoint",
+    "operation": "Quando um item e criado ou modificado",
+    "parameters": {
+      "siteAddress": "https://contoso.sharepoint.com/sites/exemplo",
+      "listName": "Chamados"
+    }
+  },
+  "actions": [
+    {
+      "name": "Condicao - Prioridade alta",
+      "type": "If",
+      "expression": "@equals(triggerBody()?['Prioridade/Value'], 'Alta')",
+      "ifTrue": [
+        {
+          "name": "Postar cartao adaptavel no canal",
+          "connector": "Microsoft Teams",
+          "operation": "Postar cartao adaptavel em um canal (Flow bot)",
+          "parameters": {
+            "teamId": "TEAM_EXEMPLO_123",
+            "channelId": "CHANNEL_EXEMPLO_456",
+            "adaptiveCard": {
+              "type": "AdaptiveCard",
+              "version": "1.4",
+              "body": [
+                { "type": "TextBlock", "size": "Large", "weight": "Bolder", "text": "Novo chamado de alta prioridade" },
+                { "type": "TextBlock", "text": "Titulo: @{triggerBody()?['Title']}", "wrap": true }
+              ],
+              "actions": [
+                { "type": "Action.OpenUrl", "title": "Abrir item", "url": "https://exemplo.com/item" }
+              ]
+            }
+          }
+        }
+      ],
+      "ifFalse": []
+    }
+  ]
+}

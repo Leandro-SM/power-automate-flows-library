@@ -30,6 +30,9 @@ Cada template inclui:
 | 01 | [Aprovação de solicitações](templates/01-aprovacao-de-solicitacoes/) | Aprovações | Novo item em lista |
 | 02 | [Notificação de e-mail agendada](templates/02-notificacao-email-agendada/) | Notificações | Agendamento (recorrência) |
 | 03 | [Backup de anexos em nuvem](templates/03-backup-anexos-nuvem/) | Integração/Arquivos | Novo e-mail com anexo |
+| 04 | [Formulário → SharePoint](templates/04-formulario-para-sharepoint/) | Coleta de dados | Nova resposta no Forms |
+| 05 | [Notificação no Microsoft Teams](templates/05-notificacao-teams/) | Notificações | Item criado/modificado |
+| 06 | [Integração via HTTP com API](templates/06-integracao-http-api/) | Integração | Agendamento (recorrência) |
 
 ## 🗂️ Estrutura do repositório
 
@@ -44,7 +47,10 @@ power-automate-flows-library/
 └── templates/
     ├── 01-aprovacao-de-solicitacoes/
     ├── 02-notificacao-email-agendada/
-    └── 03-backup-anexos-nuvem/
+    ├── 03-backup-anexos-nuvem/
+    ├── 04-formulario-para-sharepoint/
+    ├── 05-notificacao-teams/
+    └── 06-integracao-http-api/
 ```
 
 ## 📖 Documentação geral

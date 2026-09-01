@@ -1,0 +1,30 @@
+# ---- Segredos e conexões (NUNCA versionar) ----
+.env
+.env.*
+*.local
+secrets.json
+connections.json
+*.key
+*.pem
+
+# ---- Exports reais de soluções (não publicar) ----
+*.zip
+export/
+solutions/
+
+# ---- Sistema operacional ----
+.DS_Store
+Thumbs.db
+
+# ---- Editores / IDEs ----
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ---- Logs e temporários ----
+*.log
+*.tmp
+tmp/
+temp/

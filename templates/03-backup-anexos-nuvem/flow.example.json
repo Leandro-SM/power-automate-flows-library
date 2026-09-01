@@ -1,0 +1,44 @@
+{
+  "$comment": "Descrição estruturada GENÉRICA e FICTÍCIA de um fluxo do Power Automate. Fins didáticos; não é um export oficial nem contém conexões reais.",
+  "name": "Backup de Anexos em Nuvem",
+  "type": "automated",
+  "trigger": {
+    "connector": "Office 365 Outlook",
+    "operation": "Quando um novo email chega (V3)",
+    "parameters": {
+      "onlyWithAttachments": true,
+      "subjectFilter": "Fatura",
+      "includeAttachments": true
+    }
+  },
+  "actions": [
+    {
+      "name": "Apply to each - anexo",
+      "type": "Foreach",
+      "foreach": "@triggerBody()?['attachments']",
+      "actions": [
+        {
+          "name": "Criar arquivo",
+          "connector": "OneDrive for Business",
+          "operation": "Criar arquivo",
+          "parameters": {
+            "folderPath": "/Backups/Anexos",
+            "name": "@{items('Apply_to_each_-_anexo')?['name']}",
+            "body": "@{items('Apply_to_each_-_anexo')?['contentBytes']}"
+          }
+        },
+        {
+          "name": "Registrar log (opcional)",
+          "connector": "SharePoint",
+          "operation": "Criar item",
+          "parameters": {
+            "listName": "LogBackups",
+            "Remetente": "@{triggerBody()?['from']}",
+            "Arquivo": "@{items('Apply_to_each_-_anexo')?['name']}",
+            "Data": "@{utcNow()}"
+          }
+        }
+      ]
+    }
+  ]
+}

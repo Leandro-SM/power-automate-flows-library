@@ -1,0 +1,50 @@
+{
+  "$comment": "Descrição estruturada GENÉRICA e FICTÍCIA de um fluxo agendado do Power Automate. Fins didáticos; não é um export oficial nem contém conexões reais.",
+  "name": "Notificacao de Email Agendada",
+  "type": "scheduled",
+  "trigger": {
+    "connector": "Schedule",
+    "operation": "Recorrência",
+    "parameters": {
+      "frequency": "Day",
+      "interval": 1,
+      "startTime": "2026-01-01T08:00:00"
+    }
+  },
+  "actions": [
+    {
+      "name": "Obter itens",
+      "connector": "SharePoint",
+      "operation": "Obter itens",
+      "parameters": {
+        "siteAddress": "https://contoso.sharepoint.com/sites/exemplo",
+        "listName": "Tarefas",
+        "filterQuery": "Status eq 'Pendente'"
+      }
+    },
+    {
+      "name": "Condicao - Ha itens",
+      "type": "If",
+      "expression": "@greater(length(body('Obter_itens')?['value']), 0)",
+      "ifTrue": [
+        {
+          "name": "Criar tabela HTML",
+          "connector": "Data Operations",
+          "operation": "Criar tabela HTML",
+          "parameters": { "from": "@body('Obter_itens')?['value']" }
+        },
+        {
+          "name": "Enviar email resumo",
+          "connector": "Office 365 Outlook",
+          "operation": "Enviar um email (V2)",
+          "parameters": {
+            "to": "equipe@exemplo.com",
+            "subject": "Resumo diario de tarefas pendentes",
+            "body": "Segue o resumo:<br/>@{body('Criar_tabela_HTML')}"
+          }
+        }
+      ],
+      "ifFalse": []
+    }
+  ]
+}

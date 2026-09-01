@@ -1,0 +1,56 @@
+{
+  "$comment": "Descrição estruturada GENÉRICA e FICTÍCIA de um fluxo do Power Automate. Fins didáticos; não é um export oficial nem contém conexões reais.",
+  "name": "Aprovacao de Solicitacoes",
+  "type": "automated",
+  "trigger": {
+    "connector": "SharePoint",
+    "operation": "Quando um item é criado",
+    "parameters": {
+      "siteAddress": "https://contoso.sharepoint.com/sites/exemplo",
+      "listName": "Solicitacoes"
+    }
+  },
+  "actions": [
+    {
+      "name": "Iniciar e aguardar uma aprovacao",
+      "connector": "Approvals",
+      "type": "ApproveReject",
+      "parameters": {
+        "title": "Nova solicitacao: @{triggerBody()?['Title']}",
+        "assignedTo": "aprovador@exemplo.com",
+        "details": "Solicitante: @{triggerBody()?['Author/DisplayName']}"
+      }
+    },
+    {
+      "name": "Condicao - Resultado",
+      "type": "If",
+      "expression": "@equals(outputs('Iniciar_e_aguardar_uma_aprovacao')?['outcome'], 'Approve')",
+      "ifTrue": [
+        {
+          "name": "Atualizar item - Aprovado",
+          "connector": "SharePoint",
+          "operation": "Atualizar item",
+          "parameters": { "Status": "Aprovado" }
+        }
+      ],
+      "ifFalse": [
+        {
+          "name": "Atualizar item - Rejeitado",
+          "connector": "SharePoint",
+          "operation": "Atualizar item",
+          "parameters": { "Status": "Rejeitado" }
+        }
+      ]
+    },
+    {
+      "name": "Notificar solicitante",
+      "connector": "Office 365 Outlook",
+      "operation": "Enviar um email (V2)",
+      "parameters": {
+        "to": "@{triggerBody()?['Author/Email']}",
+        "subject": "Resultado da sua solicitacao",
+        "body": "Sua solicitacao foi processada. Status atualizado na lista."
+      }
+    }
+  ]
+}

@@ -74,4 +74,4 @@ Distribuído sob a licença MIT. Veja [`LICENSE`](LICENSE).
 
 ---
 
-> ⚠️ Projeto **educativo e genérico**. Nenhum template contém segredos, conexões reais ou dados de organizações.
+> ⚠️ Os templates devem ser importados manualmente e servem apenas como instrução

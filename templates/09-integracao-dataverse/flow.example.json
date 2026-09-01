@@ -1,0 +1,47 @@
+{
+  "$comment": "Descrição estruturada GENÉRICA e FICTÍCIA de um fluxo do Power Automate. Fins didáticos; não é um export oficial nem contém conexões reais.",
+  "name": "Integracao com Dataverse",
+  "type": "automated",
+  "trigger": {
+    "connector": "Microsoft Dataverse",
+    "operation": "Quando uma linha e adicionada, modificada ou excluida",
+    "parameters": {
+      "environment": "org-exemplo (Default)",
+      "table": "Oportunidades",
+      "scope": "Organization",
+      "changeType": "Added"
+    }
+  },
+  "actions": [
+    {
+      "name": "Adicionar linha relacionada",
+      "connector": "Microsoft Dataverse",
+      "operation": "Adicionar uma nova linha",
+      "parameters": {
+        "table": "Tarefas",
+        "assunto": "Acompanhar nova oportunidade",
+        "oportunidadeId": "@{triggerOutputs()?['body/oportunidadeid']}"
+      }
+    },
+    {
+      "name": "Atualizar linha original",
+      "connector": "Microsoft Dataverse",
+      "operation": "Atualizar uma linha",
+      "parameters": {
+        "table": "Oportunidades",
+        "rowId": "@{triggerOutputs()?['body/oportunidadeid']}",
+        "situacao": "Em acompanhamento"
+      }
+    },
+    {
+      "name": "Notificar responsavel",
+      "connector": "Office 365 Outlook",
+      "operation": "Enviar um email (V2)",
+      "parameters": {
+        "to": "responsavel@exemplo.com",
+        "subject": "Nova oportunidade registrada",
+        "body": "Uma nova oportunidade foi criada e uma tarefa de acompanhamento foi gerada."
+      }
+    }
+  ]
+}

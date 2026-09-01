@@ -33,6 +33,9 @@ Cada template inclui:
 | 04 | [Formulário → SharePoint](templates/04-formulario-para-sharepoint/) | Coleta de dados | Nova resposta no Forms |
 | 05 | [Notificação no Microsoft Teams](templates/05-notificacao-teams/) | Notificações | Item criado/modificado |
 | 06 | [Integração via HTTP com API](templates/06-integracao-http-api/) | Integração | Agendamento (recorrência) |
+| 07 | [Webhook (Requisição HTTP recebida)](templates/07-webhook-http-recebido/) | Integração | Requisição HTTP recebida |
+| 08 | [Sincronização com SQL Server](templates/08-sincronizacao-sql-server/) | Integração/Dados | Agendamento (recorrência) |
+| 09 | [Integração com Dataverse](templates/09-integracao-dataverse/) | Dados/Power Platform | Linha adicionada/modificada |
 
 ## 🗂️ Estrutura do repositório
 
@@ -50,7 +53,10 @@ power-automate-flows-library/
     ├── 03-backup-anexos-nuvem/
     ├── 04-formulario-para-sharepoint/
     ├── 05-notificacao-teams/
-    └── 06-integracao-http-api/
+    ├── 06-integracao-http-api/
+    ├── 07-webhook-http-recebido/
+    ├── 08-sincronizacao-sql-server/
+    └── 09-integracao-dataverse/
 ```
 
 ## 📖 Documentação geral

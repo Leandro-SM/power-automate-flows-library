@@ -1,0 +1,72 @@
+{
+  "$comment": "Descrição estruturada GENÉRICA e FICTÍCIA de um fluxo do Power Automate. Fins didáticos; não é um export oficial nem contém conexões reais. NÃO inclua strings de conexão reais.",
+  "name": "Sincronizacao com SQL Server",
+  "type": "scheduled",
+  "trigger": {
+    "connector": "Schedule",
+    "operation": "Recorrência",
+    "parameters": {
+      "frequency": "Minute",
+      "interval": 15
+    }
+  },
+  "actions": [
+    {
+      "name": "Obter linhas",
+      "connector": "SQL Server",
+      "operation": "Obter linhas (V2)",
+      "parameters": {
+        "server": "sqlserver-exemplo.database.windows.net",
+        "database": "VendasDB",
+        "table": "[dbo].[Pedidos]",
+        "$filter": "Status eq 'Novo'"
+      }
+    },
+    {
+      "name": "Apply to each - registro",
+      "type": "Foreach",
+      "foreach": "@body('Obter_linhas')?['value']",
+      "actions": [
+        {
+          "name": "Obter itens - verificar existencia",
+          "connector": "SharePoint",
+          "operation": "Obter itens",
+          "parameters": {
+            "listName": "Pedidos",
+            "$filter": "PedidoId eq '@{items('Apply_to_each_-_registro')?['PedidoId']}'"
+          }
+        },
+        {
+          "name": "Condicao - Ja existe?",
+          "type": "If",
+          "expression": "@greater(length(body('Obter_itens_-_verificar_existencia')?['value']), 0)",
+          "ifTrue": [
+            {
+              "name": "Atualizar item",
+              "connector": "SharePoint",
+              "operation": "Atualizar item",
+              "parameters": {
+                "listName": "Pedidos",
+                "id": "@{first(body('Obter_itens_-_verificar_existencia')?['value'])?['ID']}",
+                "Status": "@{items('Apply_to_each_-_registro')?['Status']}"
+              }
+            }
+          ],
+          "ifFalse": [
+            {
+              "name": "Criar item",
+              "connector": "SharePoint",
+              "operation": "Criar item",
+              "parameters": {
+                "listName": "Pedidos",
+                "Title": "@{items('Apply_to_each_-_registro')?['PedidoId']}",
+                "Cliente": "@{items('Apply_to_each_-_registro')?['Cliente']}",
+                "Status": "@{items('Apply_to_each_-_registro')?['Status']}"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

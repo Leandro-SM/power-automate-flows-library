@@ -1,0 +1,93 @@
+{
+  "$comment": "Descrição estruturada GENÉRICA e FICTÍCIA de um fluxo do Power Automate. Fins didáticos; não é um export oficial nem contém conexões reais. NÃO inclua tokens reais.",
+  "name": "Integracao HTTP com API Externa",
+  "type": "scheduled",
+  "trigger": {
+    "connector": "Schedule",
+    "operation": "Recorrência",
+    "parameters": {
+      "frequency": "Hour",
+      "interval": 1
+    }
+  },
+  "actions": [
+    {
+      "name": "Try",
+      "type": "Scope",
+      "actions": [
+        {
+          "name": "HTTP - GET API externa",
+          "connector": "HTTP",
+          "operation": "HTTP",
+          "parameters": {
+            "method": "GET",
+            "uri": "https://api.exemplo.com/v1/pedidos",
+            "headers": {
+              "Authorization": "Bearer @{variables('token')}",
+              "Content-Type": "application/json"
+            }
+          }
+        },
+        {
+          "name": "Parse JSON",
+          "connector": "Data Operations",
+          "operation": "Parse JSON",
+          "parameters": {
+            "content": "@body('HTTP_-_GET_API_externa')",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": { "type": "string" },
+                      "cliente": { "type": "string" },
+                      "total": { "type": "number" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Apply to each - registro",
+          "type": "Foreach",
+          "foreach": "@body('Parse_JSON')?['value']",
+          "actions": [
+            {
+              "name": "Criar item",
+              "connector": "SharePoint",
+              "operation": "Criar item",
+              "parameters": {
+                "listName": "PedidosIntegrados",
+                "Title": "@{items('Apply_to_each_-_registro')?['id']}",
+                "Cliente": "@{items('Apply_to_each_-_registro')?['cliente']}",
+                "Total": "@{items('Apply_to_each_-_registro')?['total']}"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Catch",
+      "type": "Scope",
+      "runAfter": { "Try": ["Failed", "TimedOut"] },
+      "actions": [
+        {
+          "name": "Notificar erro",
+          "connector": "Office 365 Outlook",
+          "operation": "Enviar um email (V2)",
+          "parameters": {
+            "to": "suporte@exemplo.com",
+            "subject": "Falha na integracao HTTP",
+            "body": "O fluxo de integracao falhou. Verifique os logs."
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "$comment": "Descrição estruturada GENÉRICA e FICTÍCIA de um fluxo do Power Automate. Fins didáticos; não é um export oficial nem contém conexões reais.",
+  "name": "Webhook HTTP Recebido",
+  "type": "instant",
+  "trigger": {
+    "connector": "Request",
+    "operation": "Quando uma requisicao HTTP e recebida",
+    "parameters": {
+      "schema": {
+        "type": "object",
+        "properties": {
+          "eventoId": { "type": "string" },
+          "tipo": { "type": "string" },
+          "mensagem": { "type": "string" }
+        },
+        "required": ["eventoId", "tipo"]
+      }
+    }
+  },
+  "actions": [
+    {
+      "name": "Condicao - Campos obrigatorios",
+      "type": "If",
+      "expression": "@and(not(empty(triggerBody()?['eventoId'])), not(empty(triggerBody()?['tipo'])))",
+      "ifTrue": [
+        {
+          "name": "Registrar item",
+          "connector": "SharePoint",
+          "operation": "Criar item",
+          "parameters": {
+            "listName": "EventosRecebidos",
+            "Title": "@{triggerBody()?['eventoId']}",
+            "Tipo": "@{triggerBody()?['tipo']}",
+            "Mensagem": "@{triggerBody()?['mensagem']}"
+          }
+        },
+        {
+          "name": "Response 200",
+          "connector": "Request",
+          "operation": "Response",
+          "parameters": {
+            "statusCode": 200,
+            "headers": { "Content-Type": "application/json" },
+            "body": { "status": "ok", "eventoId": "@{triggerBody()?['eventoId']}" }
+          }
+        }
+      ],
+      "ifFalse": [
+        {
+          "name": "Response 400",
+          "connector": "Request",
+          "operation": "Response",
+          "parameters": {
+            "statusCode": 400,
+            "headers": { "Content-Type": "application/json" },
+            "body": { "status": "erro", "mensagem": "Campos obrigatorios ausentes" }
+          }
+        }
+      ]
+    }
+  ]
+}

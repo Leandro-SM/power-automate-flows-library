@@ -1,0 +1,45 @@
+{
+  "$comment": "Descrição estruturada GENÉRICA e FICTÍCIA de um fluxo do Power Automate. Fins didáticos; não é um export oficial nem contém conexões reais.",
+  "name": "Formulario para SharePoint",
+  "type": "automated",
+  "trigger": {
+    "connector": "Microsoft Forms",
+    "operation": "Quando uma nova resposta e enviada",
+    "parameters": {
+      "formId": "FORM_EXEMPLO_123"
+    }
+  },
+  "actions": [
+    {
+      "name": "Obter detalhes da resposta",
+      "connector": "Microsoft Forms",
+      "operation": "Obter detalhes da resposta",
+      "parameters": {
+        "formId": "FORM_EXEMPLO_123",
+        "responseId": "@triggerOutputs()?['body/resourceData/responseId']"
+      }
+    },
+    {
+      "name": "Criar item",
+      "connector": "SharePoint",
+      "operation": "Criar item",
+      "parameters": {
+        "siteAddress": "https://contoso.sharepoint.com/sites/exemplo",
+        "listName": "Inscricoes",
+        "Title": "@{outputs('Obter_detalhes_da_resposta')?['body/nome']}",
+        "Email": "@{outputs('Obter_detalhes_da_resposta')?['body/email']}",
+        "DataResposta": "@{utcNow()}"
+      }
+    },
+    {
+      "name": "Enviar email de confirmacao",
+      "connector": "Office 365 Outlook",
+      "operation": "Enviar um email (V2)",
+      "parameters": {
+        "to": "time@exemplo.com",
+        "subject": "Nova inscricao registrada",
+        "body": "Uma nova resposta foi registrada na lista Inscricoes."
+      }
+    }
+  ]
+}
